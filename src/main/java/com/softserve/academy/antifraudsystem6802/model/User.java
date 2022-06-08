@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,11 +29,15 @@ public class User implements UserDetails, UserDetailsMixin {
     @NotEmpty
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Role role;
     @JsonIgnore
     boolean isAccountNonLocked;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Role role;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(role);
+    }
     @Override
     public boolean isAccountNonLocked() {
         return isAccountNonLocked;
