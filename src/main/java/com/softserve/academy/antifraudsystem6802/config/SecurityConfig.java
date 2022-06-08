@@ -1,5 +1,6 @@
 package com.softserve.academy.antifraudsystem6802.config;
 
+import com.softserve.academy.antifraudsystem6802.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -38,10 +39,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .frameOptions().disable() // for Postman, the H2 console
                 .and()
                     .authorizeRequests() // manage access
-                        .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole("ADMINISTRATOR", "SUPPORT")
-                        .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasAnyRole("ADMINISTRATOR")
-                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole("MERCHANT")
-                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/access").hasAnyRole("ADMINISTRATOR")
+                        .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole(Role.ADMINISTRATOR.name(), Role.SUPPORT.name())
+                        .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasAnyRole(Role.ADMINISTRATOR.name())
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole(Role.MERCHANT.name())
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/access").hasAnyRole(Role.ADMINISTRATOR.name())
                         .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
                         .mvcMatchers("/actuator/shutdown").permitAll() // needs to run test
                 .and()

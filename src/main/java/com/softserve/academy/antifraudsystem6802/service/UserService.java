@@ -1,5 +1,6 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
+import com.softserve.academy.antifraudsystem6802.model.Role;
 import com.softserve.academy.antifraudsystem6802.model.User;
 import com.softserve.academy.antifraudsystem6802.repository.UserRepository;
 import org.springframework.data.domain.Sort;
@@ -33,6 +34,7 @@ public class UserService implements UserDetailsService {
     public Optional<User> register(User user) {
         if(userRepository.count() == 0){
             user.setRole(Role.ADMINISTRATOR);
+            user.setAccountNonLocked(true);
         } else{
             user.setRole(Role.MERCHANT);
             user.setAccountNonLocked(false);
