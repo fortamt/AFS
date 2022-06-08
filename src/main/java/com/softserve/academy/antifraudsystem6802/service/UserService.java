@@ -2,16 +2,20 @@ package com.softserve.academy.antifraudsystem6802.service;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
 import com.softserve.academy.antifraudsystem6802.model.User;
+import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
 import com.softserve.academy.antifraudsystem6802.repository.UserRepository;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -32,10 +36,10 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Optional<User> register(User user) {
-        if(userRepository.count() == 0){
+        if (userRepository.count() == 0) {
             user.setRole(Role.ADMINISTRATOR);
             user.setAccountNonLocked(true);
-        } else{
+        } else {
             user.setRole(Role.MERCHANT);
             user.setAccountNonLocked(false);
         }
@@ -55,5 +59,19 @@ public class UserService implements UserDetailsService {
     @Transactional
     public boolean delete(String username) {
         return userRepository.deleteByUsernameIgnoreCase(username) == 1;
+    }
+
+    @Transactional
+    public Optional<User> changeRole(RoleRequest request) {
+        Optional<User> optionalUser = userRepository.findByUsernameIgnoreCase(request.getUsername());
+        if (optionalUser.isEmpty()) {
+            return Optional.empty();
+        }
+        var user = optionalUser.get();
+        if (Objects.equals(user.getRole(), request.getRole())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+        user.setRole(request.getRole());
+        return Optional.of(userRepository.save(user));
     }
 }
