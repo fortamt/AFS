@@ -32,11 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //@formatter:off
         http.httpBasic()
-                    .authenticationEntryPoint(restAuthenticationEntryPoint()) // Handles auth error
+                .authenticationEntryPoint(restAuthenticationEntryPoint()) // Handles auth error
                 .and()
-                    .csrf().disable()
-                    .headers()
-                        .frameOptions().disable() // for Postman, the H2 console
+                .csrf().disable()
+                .headers()
+                .frameOptions().disable() // for Postman, the H2 console
                 .and()
                     .authorizeRequests() // manage access
                         .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole(Role.ADMINISTRATOR.name(), Role.SUPPORT.name())
@@ -47,8 +47,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
                         .mvcMatchers("/actuator/shutdown").permitAll() // needs to run test
                 .and()
-                    .sessionManagement()
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // no session
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // no session
         //@formatter:on
     }
 

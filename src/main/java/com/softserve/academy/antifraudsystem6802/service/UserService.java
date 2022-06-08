@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -54,6 +55,30 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll(
                 Sort.sort(User.class).by(User::getId).ascending()
         );
+    }
+
+    public Map<String, String> lock(Map<String, String> lockUsers) {
+        String username = lockUsers.get("username");
+        String operation = lockUsers.get("operation");
+
+        User user = userRepository.findByUsernameIgnoreCase(username).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+        if (user.getRole().equals(Role.ADMINISTRATOR.getAuthority())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (operation.equals("LOCK")) {
+            user.setAccountNonLocked(false);
+            userRepository.save(user);
+            return Map.of("status", "User " + user.getUsername() + " locked!");
+        } else if (operation.equals("UNLOCK")) {
+            user.setAccountNonLocked(true);
+            userRepository.save(user);
+            return Map.of("status", "User " + user.getUsername() + " unlocked!");
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Transactional
