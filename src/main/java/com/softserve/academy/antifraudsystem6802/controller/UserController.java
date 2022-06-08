@@ -1,12 +1,15 @@
 package com.softserve.academy.antifraudsystem6802.controller;
 
+import com.softserve.academy.antifraudsystem6802.model.Role;
 import com.softserve.academy.antifraudsystem6802.model.User;
+import com.softserve.academy.antifraudsystem6802.repository.UserRepository;
 import com.softserve.academy.antifraudsystem6802.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +25,7 @@ public class UserController {
     User createUser(@Valid @RequestBody User user) {
         return userService.register(user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT));
+
     }
 
     @GetMapping("/list")
@@ -40,4 +44,11 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PutMapping("/access")
+    public Map<String, String> doLock(@RequestBody Map<String, String> lockUsers) {
+        return userService.lock(lockUsers);
+    }
+
+
 }
