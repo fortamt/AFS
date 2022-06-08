@@ -1,5 +1,6 @@
 package com.softserve.academy.antifraudsystem6802.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,4 +26,13 @@ public class User implements UserDetails, UserDetailsMixin {
     @NotEmpty
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Role role;
+    @JsonIgnore
+    boolean isAccountNonLocked;
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
+    }
 }

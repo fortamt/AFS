@@ -38,9 +38,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .frameOptions().disable() // for Postman, the H2 console
                 .and()
                     .authorizeRequests() // manage access
-                        .mvcMatchers(HttpMethod.GET, "/api/auth/list").authenticated()
-                        .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").authenticated()
-                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").authenticated()
+                        .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole("ADMINISTRATOR", "SUPPORT")
+                        .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasAnyRole("ADMINISTRATOR")
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole("MERCHANT")
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/access").hasAnyRole("ADMINISTRATOR")
                         .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
                         .mvcMatchers("/actuator/shutdown").permitAll() // needs to run test
                 .and()

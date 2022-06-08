@@ -31,6 +31,12 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Optional<User> register(User user) {
+        if(userRepository.count() == 0){
+            user.setRole(Role.ADMINISTRATOR);
+        } else{
+            user.setRole(Role.MERCHANT);
+            user.setAccountNonLocked(false);
+        }
         if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) {
             return Optional.empty();
         }
