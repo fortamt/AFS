@@ -38,15 +38,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers()
                 .frameOptions().disable() // for Postman, the H2 console
                 .and()
-                .authorizeRequests() // manage access
-                .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole(Role.ADMINISTRATOR.name(), Role.SUPPORT.name())
-                .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasAnyRole(Role.ADMINISTRATOR.name())
-                .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole(Role.MERCHANT.name())
-                .mvcMatchers(HttpMethod.POST, "/api/antifraud/access").hasAnyRole(Role.ADMINISTRATOR.name())
-                .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
-                .mvcMatchers("/actuator/shutdown").permitAll() // needs to
-                .anyRequest()
-                .authenticated()// run test
+                    .authorizeRequests() // manage access
+                        .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole(Role.ADMINISTRATOR.name(), Role.SUPPORT.name())
+                        .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasAnyRole(Role.ADMINISTRATOR.name())
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole(Role.MERCHANT.name())
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/access").hasAnyRole(Role.ADMINISTRATOR.name())
+                        .mvcMatchers(HttpMethod.PUT, "/api/auth/role").hasAnyRole(Role.ADMINISTRATOR.name())
+                        .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
+                        .mvcMatchers("/actuator/shutdown").permitAll() // needs to run test
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // no session
