@@ -9,18 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import com.softserve.academy.antifraudsystem6802.repository.IpRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class TransactionService {
     IpRepository ipRepository;
+
+    private final String IPV4_REGEX = "(([0-1]?\\d{1,2}\\.)|(2[0-4]\\d\\.)|(25[0-5]\\.)){3}(([0-1]?\\d{1,2})|(2[0-4]\\d)|(25[0-5]))";
+    private final Pattern IPV4_PATTERN = Pattern.compile(IPV4_REGEX);
 
     public TransactionService(IpRepository ipRepository) {
         this.ipRepository = ipRepository;
@@ -38,6 +43,7 @@ public class TransactionService {
             return Result.PROHIBITED;
         }
     }
+
 
     @Transactional
     public StolenCard addStolenCard(StolenCard stolenCard) {
@@ -75,4 +81,18 @@ public class TransactionService {
         }
         return Optional.of(ipRepository.save(ip));
     }
+
+    @Transactional
+    public boolean deleteSuspiciousIp(String ip) {
+        if(!isValidIPV4(ip)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return ipRepository.deleteByIpAddressIgnoreCase(ip) == 1;
+    }
+
+    private boolean isValidIPV4(final String s)
+    {
+        return IPV4_PATTERN.matcher(s).matches();
+    }
+
 }
