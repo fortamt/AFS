@@ -74,6 +74,7 @@ public class TransactionService {
         return stolenCardRepository.findAll(
                 Sort.sort(StolenCard.class).by(StolenCard::getId).ascending()
         );
+    }
 
     public Optional<Ip> addSuspiciousIp(Ip ip) {
         if(ipRepository.existsByIpAddressIgnoreCase(ip.getIpAddress())){
