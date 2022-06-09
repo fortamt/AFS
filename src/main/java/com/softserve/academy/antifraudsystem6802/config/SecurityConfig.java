@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasAnyRole(Role.ADMINISTRATOR.name())
                         .mvcMatchers(HttpMethod.POST, "/api/auth/access").hasAnyRole(Role.ADMINISTRATOR.name())
                         .mvcMatchers(HttpMethod.PUT, "/api/auth/role").hasAnyRole(Role.ADMINISTRATOR.name())
-                        .mvcMatchers("/api/antifraud/suspicious-ip").hasAnyRole(Role.SUPPORT.name())
+                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/suspicious-ip").hasAnyRole(Role.SUPPORT.name())
                         .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/suspicious-ip/*").hasAnyRole(Role.SUPPORT.name())
                         .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole(Role.MERCHANT.name())
                         .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
