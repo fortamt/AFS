@@ -13,12 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -96,4 +98,10 @@ public class TransactionService {
         return IPV4_PATTERN.matcher(s).matches();
     }
 
+    public List<Ip> listSuspiciousAddresses() {
+        return ipRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Ip::getId))
+                .collect(Collectors.toList());
+    }
 }

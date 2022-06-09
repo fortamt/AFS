@@ -65,4 +65,9 @@ public class TransactionController {
         }
     }
 
+    @GetMapping("/suspicious-ip")
+    @ResponseStatus(HttpStatus.OK)
+    List<Ip> listSuspiciousAddresses() {
+        return transactionService.listSuspiciousAddresses();
+    }
 }
