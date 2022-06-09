@@ -19,6 +19,8 @@ import java.util.Objects;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.softserve.academy.antifraudsystem6802.model.Role.*;
+
 @Service
 public class UserService implements UserDetailsService {
     UserRepository userRepository;
@@ -93,11 +95,20 @@ public class UserService implements UserDetailsService {
             return Optional.empty();
         }
         var user = optionalUser.get();
-        if (Objects.equals(user.getRole(), request.getRole())) {
+        var role = request.getRole();
+        validateRole(user, role);
+        user.setRole(role);
+        return Optional.of(userRepository.save(user));
+    }
+
+    private void validateRole(User user, Role role) {
+        if (!Objects.equals(role, SUPPORT) && !Objects.equals(role, MERCHANT)
+                || Objects.equals(role, ADMINISTRATOR)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (Objects.equals(user.getRole(), role)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
-        user.setRole(request.getRole());
-        return Optional.of(userRepository.save(user));
     }
 
 

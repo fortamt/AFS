@@ -52,10 +52,6 @@ public class UserController {
 
     @PutMapping("/role")
     User role(@RequestBody RoleRequest request) {
-        var role = request.getRole();
-        if (!Objects.equals(role, SUPPORT) && !Objects.equals(role, MERCHANT)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
         return userService.changeRole(request)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
