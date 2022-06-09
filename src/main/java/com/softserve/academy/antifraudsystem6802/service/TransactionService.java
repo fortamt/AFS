@@ -1,5 +1,6 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
+import com.softserve.academy.antifraudsystem6802.model.Ip;
 import com.softserve.academy.antifraudsystem6802.model.Result;
 import com.softserve.academy.antifraudsystem6802.model.StolenCard;
 import com.softserve.academy.antifraudsystem6802.model.User;
@@ -7,6 +8,7 @@ import com.softserve.academy.antifraudsystem6802.repository.StolenCardRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import com.softserve.academy.antifraudsystem6802.repository.IpRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -14,8 +16,15 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Optional;
+
 @Service
 public class TransactionService {
+    IpRepository ipRepository;
+
+    public TransactionService(IpRepository ipRepository) {
+        this.ipRepository = ipRepository;
+    }
 
     @Autowired
     StolenCardRepository stolenCardRepository;
@@ -59,5 +68,11 @@ public class TransactionService {
         return stolenCardRepository.findAll(
                 Sort.sort(StolenCard.class).by(StolenCard::getId).ascending()
         );
+
+    public Optional<Ip> addSuspiciousIp(Ip ip) {
+        if(ipRepository.existsByIpAddressIgnoreCase(ip.getIpAddress())){
+            return Optional.empty();
+        }
+        return Optional.of(ipRepository.save(ip));
     }
 }

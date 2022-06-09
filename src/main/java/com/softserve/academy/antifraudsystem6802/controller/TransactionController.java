@@ -1,5 +1,6 @@
 package com.softserve.academy.antifraudsystem6802.controller;
 
+import com.softserve.academy.antifraudsystem6802.model.Ip;
 import com.softserve.academy.antifraudsystem6802.model.Result;
 import com.softserve.academy.antifraudsystem6802.model.StolenCard;
 import com.softserve.academy.antifraudsystem6802.model.request.TransactionRequest;
@@ -8,10 +9,12 @@ import com.softserve.academy.antifraudsystem6802.service.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.server.ResponseStatusException;
+import javax.validation.Valid;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/antifraud")
@@ -24,6 +27,7 @@ public class TransactionController {
         Result result = transactionService.process(request.getAmount());
         return new TransactionResultResponse(result);
     }
+
 
     @PostMapping("/stolencard")
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,4 +46,11 @@ public class TransactionController {
     List<StolenCard> listStolenCards() {
         return transactionService.listStolenCards();
     }
+    @PostMapping("/suspicious-ip")
+    @ResponseStatus(HttpStatus.CREATED)
+    Ip saveSuspiciousIp(@Valid @RequestBody Ip ip){
+        return transactionService.addSuspiciousIp(ip)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT));
+    }
+
 }
