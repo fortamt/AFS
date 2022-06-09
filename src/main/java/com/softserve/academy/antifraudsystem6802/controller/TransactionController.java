@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/antifraud")
@@ -27,9 +27,21 @@ public class TransactionController {
 
     @PostMapping("/suspicious-ip")
     @ResponseStatus(HttpStatus.CREATED)
-    Ip saveSuspiciousIp(@Valid @RequestBody Ip ip){
+    Ip saveSuspiciousIp(@Valid @RequestBody Ip ip) {
         return transactionService.addSuspiciousIp(ip)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT));
+    }
+
+    @DeleteMapping("/suspicious-ip/{ip}")
+    @ResponseStatus(HttpStatus.CREATED)
+    Map<String, String> deleteSuspiciousIp(@PathVariable("ip") String ip) {
+        if (transactionService.deleteSuspiciousIp(ip)) {
+            return Map.of(
+                    "status", "IP " + ip + " successfully removed!"
+            );
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
 }
