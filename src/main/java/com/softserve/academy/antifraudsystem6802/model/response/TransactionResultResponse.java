@@ -1,9 +1,20 @@
 package com.softserve.academy.antifraudsystem6802.model.response;
 
 import com.softserve.academy.antifraudsystem6802.model.Result;
-import lombok.Value;
+import lombok.*;
 
-@Value
+@Getter
+@Setter
 public class TransactionResultResponse {
-    Result result;
+    private Result result;
+    private String info = "";
+    public TransactionResultResponse() {
+
+    }
+    public void appendInfo(String str) {
+        info += str;
+    }
+    public String getInfo() {
+        return info.length() == 0 ? "none" : info.trim();
+    }
 }

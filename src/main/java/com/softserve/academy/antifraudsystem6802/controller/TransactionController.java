@@ -23,9 +23,9 @@ public class TransactionController {
     TransactionService transactionService;
 
     @PostMapping("/transaction")
+    @ResponseStatus(HttpStatus.OK)
     TransactionResultResponse transactionPost(@Valid @RequestBody TransactionRequest request) {
-        Result result = transactionService.process(request.getAmount());
-        return new TransactionResultResponse(result);
+        return transactionService.process(request);
     }
 
 

@@ -60,4 +60,5 @@ public class UserController {
     public Map<String, String> doLock(@RequestBody Map<String, String> lockUsers) {
         return userService.lock(lockUsers);
     }
+
 }
