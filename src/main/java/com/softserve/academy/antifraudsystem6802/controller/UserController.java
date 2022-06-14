@@ -1,23 +1,16 @@
 package com.softserve.academy.antifraudsystem6802.controller;
 
-import com.softserve.academy.antifraudsystem6802.model.Role;
 import com.softserve.academy.antifraudsystem6802.model.User;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
-import com.softserve.academy.antifraudsystem6802.repository.UserRepository;
 import com.softserve.academy.antifraudsystem6802.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
-import static com.softserve.academy.antifraudsystem6802.model.Role.MERCHANT;
-import static com.softserve.academy.antifraudsystem6802.model.Role.SUPPORT;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -34,6 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/list")
+    @ResponseStatus(HttpStatus.OK)
     List<User> listUsers() {
         return userService.listUsers();
     }
@@ -51,12 +45,14 @@ public class UserController {
     }
 
     @PutMapping("/role")
+    @ResponseStatus(HttpStatus.OK)
     User role(@RequestBody RoleRequest request) {
         return userService.changeRole(request)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/access")
+    @ResponseStatus(HttpStatus.OK)
     public Map<String, String> doLock(@RequestBody Map<String, String> lockUsers) {
         return userService.lock(lockUsers);
     }

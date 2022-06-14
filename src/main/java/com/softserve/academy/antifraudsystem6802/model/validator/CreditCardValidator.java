@@ -1,15 +1,14 @@
 package com.softserve.academy.antifraudsystem6802.model.validator;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
 public class CreditCardValidator implements
         ConstraintValidator<CreditCardConstraint, String> {
-
-    @Override
-    public void initialize(CreditCardConstraint creditCard) {
-    }
 
     @Override
     public boolean isValid(String creditCard,
@@ -33,11 +32,15 @@ public class CreditCardValidator implements
         return String.valueOf(checkDigit);
     }
     private static boolean checkLuhn(String number) {
-        return number.length() == 16 &&
-                Objects.equals(
-                        calculateLuhnCheckDigit(number.substring(0, 15)),
-                        number.substring(15)
-                );
+        if(number == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        } else {
+            return number.length() == 16 &&
+                    Objects.equals(
+                            calculateLuhnCheckDigit(number.substring(0, 15)),
+                            number.substring(15)
+                    );
+        }
     }
 
 }

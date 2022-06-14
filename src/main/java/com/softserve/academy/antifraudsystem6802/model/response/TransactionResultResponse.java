@@ -1,25 +1,25 @@
 package com.softserve.academy.antifraudsystem6802.model.response;
 
-import com.softserve.academy.antifraudsystem6802.model.Region;
 import com.softserve.academy.antifraudsystem6802.model.Result;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 public class TransactionResultResponse {
     private Result result;
-    private String info = "";
-   private long count;
-    public TransactionResultResponse() {
+    private Set<String> info = new HashSet<>();
+    public TransactionResultResponse() {}
 
+    public void addInfo(String s){
+        info.add(s);
     }
-    public void appendInfo(String str) {
-        info += str;
-    }
+
     public String getInfo() {
-        return info.length() == 0 ? "none" : info.trim();
+        return String.join(", ", info);
     }
+
 }

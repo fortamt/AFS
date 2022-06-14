@@ -15,8 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Objects;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.softserve.academy.antifraudsystem6802.model.Role.*;
@@ -40,10 +40,10 @@ public class UserService implements UserDetailsService {
     @Transactional
     public Optional<User> register(User user) {
         if (userRepository.count() == 0) {
-            user.setRole(Role.ADMINISTRATOR);
+            user.setRole(ADMINISTRATOR);
             user.setAccountNonLocked(true);
         } else {
-            user.setRole(Role.MERCHANT);
+            user.setRole(MERCHANT);
             user.setAccountNonLocked(false);
         }
         if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) {
@@ -66,9 +66,6 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsernameIgnoreCase(username).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
-        if (user.getRole().equals(Role.ADMINISTRATOR.getAuthority())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
 
         if (operation.equals("LOCK")) {
             user.setAccountNonLocked(false);
@@ -110,6 +107,4 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
     }
-
-
 }
