@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface IpRepository extends JpaRepository<Ip, Long> {
-    Optional<Ip> findByIpAddressIgnoreCase(String ip);
-    boolean existsByIpAddressIgnoreCase(String ip);
-    int deleteByIpAddressIgnoreCase(String ip);
+    Optional<Ip> findByIp(String ip);
+    boolean existsByIp(String ip);
+    int deleteByIp(String ip);
 
 }

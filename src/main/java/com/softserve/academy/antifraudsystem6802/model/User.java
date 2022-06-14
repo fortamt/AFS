@@ -2,8 +2,7 @@ package com.softserve.academy.antifraudsystem6802.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,8 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "t_user")
 public class User implements UserDetails, UserDetailsMixin {
     @Id

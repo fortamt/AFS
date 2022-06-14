@@ -1,7 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.config;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -17,10 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
     UserDetailsService userDetailsService;
-    @Autowired
     PasswordEncoder passwordEncoder;
 
     @Override
@@ -38,20 +37,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers()
                 .frameOptions().disable() // for Postman, the H2 console
                 .and()
-                    .authorizeRequests() // manage access
-                        .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole(Role.ADMINISTRATOR.name(), Role.SUPPORT.name())
-                        .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasAnyRole(Role.ADMINISTRATOR.name())
-                        .mvcMatchers(HttpMethod.POST, "/api/auth/access").hasAnyRole(Role.ADMINISTRATOR.name())
-                        .mvcMatchers(HttpMethod.PUT, "/api/auth/role").hasAnyRole(Role.ADMINISTRATOR.name())
-                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/suspicious-ip").hasAnyRole(Role.SUPPORT.name())
-                        .mvcMatchers(HttpMethod.GET, "/api/antifraud/suspicious-ip").hasAnyRole(Role.SUPPORT.name())
-                        .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/suspicious-ip/*").hasAnyRole(Role.SUPPORT.name())
-                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole(Role.MERCHANT.name())
-                        .mvcMatchers(HttpMethod.POST, "/api/antifraud/stolencard").hasAnyRole(Role.SUPPORT.name())
-                        .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/stolencard/*").hasAnyRole(Role.SUPPORT.name())
-                        .mvcMatchers(HttpMethod.GET, "/api/antifraud/stolencard").hasAnyRole(Role.SUPPORT.name())
-                        .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
-                        .mvcMatchers("/actuator/shutdown").permitAll() // needs to run test
+                .authorizeRequests() // manage access
+                .mvcMatchers("/api/auth/access").hasAnyRole(Role.ADMINISTRATOR.name())
+                .mvcMatchers(HttpMethod.POST, "/api/antifraud/transaction").hasAnyRole(Role.MERCHANT.name())
+                .mvcMatchers(HttpMethod.PUT, "/api/antifraud/transaction").hasAnyRole(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.GET, "/api/auth/list").hasAnyRole(Role.ADMINISTRATOR.name(), Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.DELETE, "/api/auth/user/*").hasAnyRole(Role.ADMINISTRATOR.name())
+                .mvcMatchers(HttpMethod.PUT, "/api/auth/role").hasAnyRole(Role.ADMINISTRATOR.name())
+                .mvcMatchers(HttpMethod.POST, "/api/antifraud/suspicious-ip").hasAnyRole(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.GET, "/api/antifraud/suspicious-ip").hasAnyRole(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.GET, "/api/antifraud/history").hasAnyRole(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.GET, "/api/antifraud/history/*").hasAnyRole(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/suspicious-ip/*").hasAnyRole(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.POST, "/api/antifraud/stolencard").hasAnyRole(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.DELETE, "/api/antifraud/stolencard/*").hasAnyRole(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.GET, "/api/antifraud/stolencard").hasAnyRole(Role.SUPPORT.name())
+                .mvcMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
+                .mvcMatchers("/actuator/shutdown").permitAll() // needs to run test
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // no session
@@ -72,3 +74,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 }
+
