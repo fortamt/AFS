@@ -36,18 +36,18 @@ class UserServiceTest {
 
     private User defaultUser;
 
-//    @BeforeEach
-//    void setUp() {
-//        underTest =new UserService(userRepository, encoder);
-//
-//        this.defaultUser = new User(
-//                null,
-//                "Artem",
-//                "fortamt",
-//                "password",
-//                false,
-//                null);
-//    }
+    @BeforeEach
+    void setUp() {
+        underTest =new UserService(userRepository, encoder);
+
+        this.defaultUser = new User(
+                null,
+                "Artem",
+                "fortamt",
+                "password",
+                false,
+                null);
+    }
 
     @Test
     void loadUserByUsername() {
@@ -67,7 +67,7 @@ class UserServiceTest {
 
     @Test
     void canRegisterFirstUserAsAdministrator() {
-        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.ofNullable(defaultUser));
+        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.empty());
         Mockito.when(userRepository.save(defaultUser)).thenReturn(defaultUser);
 
         //when
@@ -88,7 +88,7 @@ class UserServiceTest {
     void canRegisterOtherNotFirstUserAsMerchant() {
         //given
         given(userRepository.count()).willReturn(1L);
-        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.ofNullable(defaultUser));
+        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.empty());
         Mockito.when(userRepository.save(defaultUser)).thenReturn(defaultUser);
 
         //when
@@ -107,9 +107,11 @@ class UserServiceTest {
 
     @Test
     void cannotRegisterExistedUser() {
+        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.ofNullable(defaultUser));
+
         //when
-        Optional<User> tryToRegisterUser = underTest.register(defaultUser);
-        assertThat(tryToRegisterUser).isEqualTo(Optional.empty());
+        assertThatThrownBy(() -> underTest.register(defaultUser))
+                .isInstanceOf(ResponseStatusException.class);
     }
 
     @Test
