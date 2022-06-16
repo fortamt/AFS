@@ -33,7 +33,6 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder encoder;
     private UserService underTest;
-
     private User defaultUser;
 
     @BeforeEach
@@ -118,7 +117,7 @@ class UserServiceTest {
     void cannotRegisterWithWrongParameters() {
         //given
         defaultUser.setRole(Role.ADMINISTRATOR);
-        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.ofNullable(defaultUser));
+        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.empty());
 
         //when
         assertThatThrownBy(() -> underTest.register(defaultUser))
