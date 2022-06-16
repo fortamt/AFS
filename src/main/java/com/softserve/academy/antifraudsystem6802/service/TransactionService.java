@@ -1,11 +1,12 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
-import com.softserve.academy.antifraudsystem6802.model.Ip;
+import com.softserve.academy.antifraudsystem6802.model.IpHolder;
 import com.softserve.academy.antifraudsystem6802.model.Result;
 import com.softserve.academy.antifraudsystem6802.model.StolenCard;
-import com.softserve.academy.antifraudsystem6802.model.request.Transaction;
+import com.softserve.academy.antifraudsystem6802.model.entity.Transaction;
 import com.softserve.academy.antifraudsystem6802.model.request.TransactionFeedback;
 import com.softserve.academy.antifraudsystem6802.model.response.TransactionResultResponse;
+import com.softserve.academy.antifraudsystem6802.model.validator.Regexp;
 import com.softserve.academy.antifraudsystem6802.repository.IpRepository;
 import com.softserve.academy.antifraudsystem6802.repository.StolenCardRepository;
 import com.softserve.academy.antifraudsystem6802.repository.TransactionRepository;
@@ -28,8 +29,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TransactionService {
 
-    private final String IPV4_REGEX = "(([0-1]?\\d{1,2}\\.)|(2[0-4]\\d\\.)|(25[0-5]\\.)){3}(([0-1]?\\d{1,2})|(2[0-4]\\d)|(25[0-5]))";
-    private final Pattern IPV4_PATTERN = Pattern.compile(IPV4_REGEX);
+    private static final Pattern IPV4_PATTERN = Pattern.compile(Regexp.IP);
+
 
     IpRepository ipRepository;
     StolenCardRepository stolenCardRepository;
@@ -53,35 +54,38 @@ public class TransactionService {
             response.setResult(Result.PROHIBITED);
             response.addInfo("ip");
         }
+        final String regionCorrelation = "region-correlation";
         if(regions == 3L){
             response.setResult(Result.MANUAL_PROCESSING);
-            response.addInfo("region-correlation");
+            response.addInfo(regionCorrelation);
         } else if(regions > 3L){
             response.setResult(Result.PROHIBITED);
-            response.addInfo("region-correlation");
+            response.addInfo(regionCorrelation);
         }
+        String ipCorrelation = "ip-correlation";
         if(ips == 3L){
             response.setResult(Result.MANUAL_PROCESSING);
-            response.addInfo("ip-correlation");
+            response.addInfo(ipCorrelation);
         } else if(ips > 3L){
             response.setResult(Result.PROHIBITED);
-            response.addInfo("ip-correlation");
+            response.addInfo(ipCorrelation);
         }
+        final String amount = "amount";
         if(request.getAmount() > 1500){
             response.setResult(Result.PROHIBITED);
-            response.addInfo("amount");
+            response.addInfo(amount);
         }
 
         if(response.getInfo().isEmpty()){
-            if(request.getAmount() <= TransactionAmountChanger.ALLOWED){
+            if(request.getAmount() <= TransactionAmountChanger.getAllowed()){
                 response.setResult(Result.ALLOWED);
                 response.addInfo("none");
-            } else if (request.getAmount() <= TransactionAmountChanger.MANUAL_PROCESSING) {
+            } else if (request.getAmount() <= TransactionAmountChanger.getManualProcessing()) {
                 response.setResult(Result.MANUAL_PROCESSING);
-                response.addInfo("amount");
-            } else if (request.getAmount() > TransactionAmountChanger.MANUAL_PROCESSING) {
+                response.addInfo(amount);
+            } else if (request.getAmount() > TransactionAmountChanger.getManualProcessing()) {
                 response.setResult(Result.PROHIBITED);
-                response.addInfo("amount");
+                response.addInfo(amount);
             }
         }
         request.setResult(response.getResult().name());
@@ -121,7 +125,7 @@ public class TransactionService {
         );
     }
 
-    public Optional<Ip> addSuspiciousIp(Ip ip) {
+    public Optional<IpHolder> addSuspiciousIp(IpHolder ip) {
         if (ipRepository.existsByIp(ip.getIp())) {
             return Optional.empty();
         }
@@ -140,10 +144,10 @@ public class TransactionService {
         return IPV4_PATTERN.matcher(s).matches();
     }
 
-    public List<Ip> listSuspiciousAddresses() {
+    public List<IpHolder> listSuspiciousAddresses() {
         return ipRepository.findAll()
                 .stream()
-                .sorted(Comparator.comparing(Ip::getId))
+                .sorted(Comparator.comparing(IpHolder::getId))
                 .collect(Collectors.toList());
     }
 
@@ -157,7 +161,7 @@ public class TransactionService {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        transactionRequest.setFeedback(feedback.getFeedback());
+        transactionRequest.setFeedback(feedback.getFeedback().name());
         TransactionAmountChanger.changeLimit(transactionRequest);
         transactionRepository.save(transactionRequest);
         return transactionRequest;

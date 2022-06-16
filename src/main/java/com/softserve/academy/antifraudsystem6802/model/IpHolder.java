@@ -1,6 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.softserve.academy.antifraudsystem6802.model.validator.Regexp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import javax.validation.constraints.Pattern;
 @Table(name = "suspicious_ip")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Ip {
+public class IpHolder {
     @Id
     @GeneratedValue
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -24,6 +25,6 @@ public class Ip {
 
     @NotEmpty
     @Column(unique = true)
-    @Pattern(regexp = "^((\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])$")
+    @Pattern(regexp = Regexp.IP)
     String ip;
 }

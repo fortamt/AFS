@@ -1,7 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
-import com.softserve.academy.antifraudsystem6802.model.User;
+import com.softserve.academy.antifraudsystem6802.model.entity.User;
 import com.softserve.academy.antifraudsystem6802.model.request.RequestLock;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
 import com.softserve.academy.antifraudsystem6802.repository.UserRepository;
@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -81,7 +82,7 @@ class UserServiceTest {
 
         assertThat(capturedUser).isEqualTo(defaultUser);
         assertThat(capturedUser.getRole()).isEqualTo(Role.ADMINISTRATOR);
-        assertThat(capturedUser.isAccountNonLocked()).isEqualTo(true);
+        assertThat(capturedUser.isAccountNonLocked()).isTrue();
     }
 
     @Test
@@ -142,7 +143,7 @@ class UserServiceTest {
 
         underTest.lock(requestLock);
         verify(userRepository).save(defaultUser);
-        assertThat(defaultUser.isAccountNonLocked()).isEqualTo(true);
+        assertThat(defaultUser.isAccountNonLocked()).isTrue();
     }
 
     @Test
@@ -169,7 +170,7 @@ class UserServiceTest {
 
         underTest.lock(requestLock);
         verify(userRepository).save(defaultUser);
-        assertThat(defaultUser.isAccountNonLocked()).isEqualTo(false);
+        assertThat(defaultUser.isAccountNonLocked()).isFalse();
     }
 
     @Test
@@ -206,7 +207,7 @@ class UserServiceTest {
 
         boolean flag = underTest.delete(defaultUser.getUsername());
         verify(userRepository).deleteByUsernameIgnoreCase(defaultUser.getUsername());
-        assertThat(flag).isEqualTo(true);
+        assertThat(flag).isTrue();
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.softserve.academy.antifraudsystem6802.repository;
 
-import com.softserve.academy.antifraudsystem6802.model.Ip;
+import com.softserve.academy.antifraudsystem6802.model.IpHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,10 +9,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class IpRepositoryTest {
+class IpRepositoryTest {
 
     @Autowired
     private IpRepository repository;
@@ -22,14 +23,14 @@ public class IpRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        repository.save(new Ip(null, ip1));
-        repository.save(new Ip(null, ip2));
+        repository.save(new IpHolder(null, ip1));
+        repository.save(new IpHolder(null, ip2));
     }
 
     @Test
     @DisplayName("The repository must return Ip in optional")
     void test1() {
-        Optional<Ip> optionalIp = repository.findByIp(ip1);
+        Optional<IpHolder> optionalIp = repository.findByIp(ip1);
 
         assertTrue(optionalIp.isPresent());
     }
@@ -38,7 +39,7 @@ public class IpRepositoryTest {
     @DisplayName("The repository must return empty optional")
     void test2() {
         String ip = "10.10.10.20";
-        Optional<Ip> optionalIp = repository.findByIp(ip);
+        Optional<IpHolder> optionalIp = repository.findByIp(ip);
 
         assertFalse(optionalIp.isPresent());
     }
@@ -56,6 +57,6 @@ public class IpRepositoryTest {
     void test4() {
         int delete = repository.deleteByIp(ip2);
 
-        assertNotNull(delete);
+        assertThat(delete).isNotZero();
     }
 }
