@@ -1,8 +1,8 @@
 package com.softserve.academy.antifraudsystem6802.controller;
 
-import com.softserve.academy.antifraudsystem6802.model.Ip;
+import com.softserve.academy.antifraudsystem6802.model.IpHolder;
 import com.softserve.academy.antifraudsystem6802.model.StolenCard;
-import com.softserve.academy.antifraudsystem6802.model.request.Transaction;
+import com.softserve.academy.antifraudsystem6802.model.entity.Transaction;
 import com.softserve.academy.antifraudsystem6802.model.request.TransactionFeedback;
 import com.softserve.academy.antifraudsystem6802.model.response.TransactionResultResponse;
 import com.softserve.academy.antifraudsystem6802.model.validator.CreditCardConstraint;
@@ -70,7 +70,7 @@ public class TransactionController {
 
     @PostMapping("/suspicious-ip")
     @ResponseStatus(HttpStatus.OK)
-    Ip saveSuspiciousIp(@Valid @RequestBody Ip ip) {
+    IpHolder saveSuspiciousIp(@Valid @RequestBody IpHolder ip) {
         return transactionService.addSuspiciousIp(ip)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT));
     }
@@ -89,7 +89,7 @@ public class TransactionController {
 
     @GetMapping("/suspicious-ip")
     @ResponseStatus(HttpStatus.OK)
-    List<Ip> listSuspiciousAddresses() {
+    List<IpHolder> listSuspiciousAddresses() {
         return transactionService.listSuspiciousAddresses();
     }
 

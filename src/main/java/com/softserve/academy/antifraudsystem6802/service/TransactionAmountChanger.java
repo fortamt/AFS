@@ -1,14 +1,16 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
 import com.softserve.academy.antifraudsystem6802.model.Result;
-import com.softserve.academy.antifraudsystem6802.model.request.Transaction;
+
+import com.softserve.academy.antifraudsystem6802.model.entity.Transaction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 public class TransactionAmountChanger {
 
-    public static long ALLOWED = 200;
-    public static long MANUAL_PROCESSING = 1500;
+    private TransactionAmountChanger(){}
+    private static long allowed = 200;
+    private static long manualProcessing = 1500;
 
     static void changeLimit(Transaction transaction){
         if(transaction.getResult().equals(transaction.getFeedback())){
@@ -43,19 +45,27 @@ public class TransactionAmountChanger {
     }
 
     private static void decreaseAllowed(Transaction transaction) {
-        ALLOWED = (long) Math.ceil(0.8 * ALLOWED - 0.2 * transaction.getAmount());
+        allowed = (long) Math.ceil(0.8 * allowed - 0.2 * transaction.getAmount());
     }
 
     private static void increaseAllowed(Transaction transaction) {
-        ALLOWED = (long) Math.ceil(0.8 * ALLOWED + 0.2 * transaction.getAmount());
+        allowed = (long) Math.ceil(0.8 * allowed + 0.2 * transaction.getAmount());
     }
 
     private static void increaseManualProcessing(Transaction transaction) {
-        MANUAL_PROCESSING = (long) Math.ceil(0.8 * MANUAL_PROCESSING + 0.2 * transaction.getAmount());
+        manualProcessing = (long) Math.ceil(0.8 * manualProcessing + 0.2 * transaction.getAmount());
     }
 
     private static void decreaseManualProcessing(Transaction transaction) {
-        MANUAL_PROCESSING = (long) Math.ceil(0.8 * MANUAL_PROCESSING - 0.2 * transaction.getAmount());
+        manualProcessing = (long) Math.ceil(0.8 * manualProcessing - 0.2 * transaction.getAmount());
+    }
+
+    public static long getAllowed() {
+        return allowed;
+    }
+
+    public static long getManualProcessing() {
+        return manualProcessing;
     }
 
 

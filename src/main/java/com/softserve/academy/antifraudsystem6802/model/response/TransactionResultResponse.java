@@ -12,7 +12,6 @@ import java.util.Set;
 public class TransactionResultResponse {
     private Result result;
     private Set<String> info = new HashSet<>();
-    public TransactionResultResponse() {}
 
     public void addInfo(String s){
         info.add(s);

@@ -1,7 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.repository;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
-import com.softserve.academy.antifraudsystem6802.model.User;
+import com.softserve.academy.antifraudsystem6802.model.entity.User;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;

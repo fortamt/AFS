@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserControllerTest {
+class UserControllerTest {
 
     @Autowired
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -77,7 +77,7 @@ public class UserControllerTest {
 
     @Test
     @Order(1)
-    public void registerUser() throws Exception {
+    void registerUser() throws Exception {
         String resultResponse = "{\r\n" +
                 "  \"id\" : 1,\r\n" +
                 "  \"name\" : \"administrator\",\r\n" +
@@ -150,7 +150,7 @@ public class UserControllerTest {
 
     @Test
     @Order(2)
-    public void lock() throws Exception {
+    void lock() throws Exception {
         String johndoe1Request1 = "{\r\n" +
                 "  \"username\" : \"johndoe1\",\r\n" +
                 "  \"operation\" : \"UNLOCK\"\r\n" +
@@ -219,7 +219,7 @@ public class UserControllerTest {
 
     @Test
     @Order(3)
-    public void changeRole() throws Exception {
+    void changeRole() throws Exception {
         String requestMarry = "{\r\n" +
                 "  \"username\" : \"marry\",\r\n" +
                 "  \"role\" : \"SUPPORT\"\r\n" +
@@ -277,7 +277,7 @@ public class UserControllerTest {
 
     @Test
     @Order(4)
-    public void deleteUser() throws Exception {
+    void deleteUser() throws Exception {
         String resultResponse1 = "{\r\n" +
                 "  \"username\" : \"johndoe1\",\r\n" +
                 "  \"status\" : \"Deleted successfully!\"\r\n" +
@@ -302,7 +302,7 @@ public class UserControllerTest {
 
     @Test
     @Order(5)
-    public void getUsers() throws Exception {
+    void getUsers() throws Exception {
         String listAnswer1 = "[ {\r\n" +
                 "  \"id\" : 1,\r\n" +
                 "  \"name\" : \"administrator\",\r\n" +

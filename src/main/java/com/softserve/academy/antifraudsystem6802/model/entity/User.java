@@ -1,17 +1,17 @@
-package com.softserve.academy.antifraudsystem6802.model;
+package com.softserve.academy.antifraudsystem6802.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.softserve.academy.antifraudsystem6802.model.Role;
+import com.softserve.academy.antifraudsystem6802.model.UserDetailsMixin;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Null;
 import java.util.Collection;
 import java.util.List;
 

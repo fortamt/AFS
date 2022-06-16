@@ -1,7 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.controllerTest;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
-import com.softserve.academy.antifraudsystem6802.model.User;
+import com.softserve.academy.antifraudsystem6802.model.entity.User;
 import com.softserve.academy.antifraudsystem6802.model.request.RequestLock;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
 import com.softserve.academy.antifraudsystem6802.service.UserService;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class TransactionControllerTest {
+class TransactionControllerTest {
     @Autowired
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private MockMvc mockMvc;
@@ -77,7 +77,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void transactionPostAmount() throws Exception {
+    void transactionPostAmount() throws Exception {
         String tr1 = "{\n" +
                 "  \"amount\": 1,\n" +
                 "  \"ip\": \"192.168.1.1\",\n" +
@@ -259,7 +259,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void transactionPostWrongData() throws Exception {
+    void transactionPostWrongData() throws Exception {
         String trW1 = "{\n" +
                 "  \"amount\": -1,\n" +
                 "  \"ip\": \"192.168.1.1\",\n" +
@@ -331,7 +331,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void transactionPostBlackList() throws Exception {
+    void transactionPostBlackList() throws Exception {
         String trP1 = "{\n" +
                 "  \"amount\": 1000,\n" +
                 "  \"ip\": \"192.168.1.67\",\n" +

@@ -1,17 +1,14 @@
-package com.softserve.academy.antifraudsystem6802.model.request;
+package com.softserve.academy.antifraudsystem6802.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.softserve.academy.antifraudsystem6802.model.RegionCodes;
 import com.softserve.academy.antifraudsystem6802.model.validator.CreditCardConstraint;
-import com.softserve.academy.antifraudsystem6802.model.validator.ValueOfEnum;
+import com.softserve.academy.antifraudsystem6802.model.validator.Regexp;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -32,14 +29,14 @@ public class Transaction {
     @Positive
     Long amount;
     @NotEmpty
-    @Pattern(regexp = "^((\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])$")
+    @Pattern(regexp = Regexp.IP)
     String ip;
     @NotEmpty
     @CreditCardConstraint
     String number;
     @NotEmpty
-    @ValueOfEnum(enumClass = RegionCodes.class)
-    String region;
+    @Enumerated(EnumType.STRING)
+    RegionCodes region;
     LocalDateTime date;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     String result;

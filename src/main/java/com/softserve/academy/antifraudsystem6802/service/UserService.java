@@ -1,7 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
-import com.softserve.academy.antifraudsystem6802.model.User;
+import com.softserve.academy.antifraudsystem6802.model.entity.User;
 import com.softserve.academy.antifraudsystem6802.model.request.RequestLock;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
 import com.softserve.academy.antifraudsystem6802.repository.UserRepository;
@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsernameIgnoreCase(username).orElseThrow(() ->
-                new UsernameNotFoundException("User " + username + " not found"));
+                new UsernameNotFoundException("User not found: " + username));
     }
 
     @Transactional
