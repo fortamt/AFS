@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -37,18 +36,18 @@ class UserServiceTest {
 
     private User defaultUser;
 
-    @BeforeEach
-    void setUp() {
-        underTest =new UserService(userRepository, encoder);
-
-        this.defaultUser = new User(
-                null,
-                "Artem",
-                "fortamt",
-                "password",
-                false,
-                null);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        underTest =new UserService(userRepository, encoder);
+//
+//        this.defaultUser = new User(
+//                null,
+//                "Artem",
+//                "fortamt",
+//                "password",
+//                false,
+//                null);
+//    }
 
     @Test
     void loadUserByUsername() {
@@ -63,7 +62,7 @@ class UserServiceTest {
     void loadUserByUsernameNotExistedUsername() {
         assertThatThrownBy(() -> underTest.loadUserByUsername("UsernameNotExisted"))
                 .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessageContaining("User UsernameNotExisted not found");
+                .hasMessageContaining("User not found: UsernameNotExisted");
     }
 
     @Test

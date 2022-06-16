@@ -41,7 +41,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public Optional<User> register(User user) {
         Optional<User> existedUser = userRepository.findByUsernameIgnoreCase(user.getUsername());
-        if (existedUser.isEmpty()) {
+        if (!existedUser.isEmpty()) {
             return Optional.empty();
         }
         if(user.getRole() != null){

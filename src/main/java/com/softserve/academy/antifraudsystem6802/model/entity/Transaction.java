@@ -34,7 +34,7 @@ public class Transaction {
     @NotEmpty
     @CreditCardConstraint
     String number;
-    @NotEmpty
+    @NotNull
     @Enumerated(EnumType.STRING)
     RegionCodes region;
     LocalDateTime date;

@@ -2,7 +2,7 @@ package com.softserve.academy.antifraudsystem6802.repository;
 
 import com.softserve.academy.antifraudsystem6802.model.RegionCodes;
 import com.softserve.academy.antifraudsystem6802.model.Result;
-import com.softserve.academy.antifraudsystem6802.model.request.Transaction;
+import com.softserve.academy.antifraudsystem6802.model.entity.Transaction;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -25,7 +25,7 @@ class TransactionRepositoryTest {
                 1000L,
                 "10.10.10.10",
                 "4735410922991992",
-                RegionCodes.ECA.name(),
+                RegionCodes.ECA,
                 LocalDateTime.of(2022, 12, 30, 18, 20),
                 Result.MANUAL_PROCESSING.name(),
                 "none"));
@@ -34,7 +34,7 @@ class TransactionRepositoryTest {
                 200L,
                 "250.10.180.10",
                 "6242146850237385",
-                RegionCodes.HIC.name(),
+                RegionCodes.HIC,
                 LocalDateTime.of(2022, 6, 2, 15, 0),
                 Result.ALLOWED.name(),
                 "none"));
@@ -43,7 +43,7 @@ class TransactionRepositoryTest {
                 1700L,
                 "250.0.180.33",
                 "6242146850237385",
-                RegionCodes.LAC.name(),
+                RegionCodes.LAC,
                 LocalDateTime.of(2022, 9, 5, 12, 5),
                 Result.PROHIBITED.name(),
                 "amount"));

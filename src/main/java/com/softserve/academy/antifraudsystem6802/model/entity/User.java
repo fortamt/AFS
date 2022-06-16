@@ -24,7 +24,6 @@ public class User implements UserDetails, UserDetailsMixin {
     @Id
     @GeneratedValue
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-
     Long id;
     @NotEmpty
     String name;
