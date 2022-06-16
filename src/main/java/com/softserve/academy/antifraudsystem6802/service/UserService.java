@@ -40,7 +40,8 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Optional<User> register(User user) {
-        if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) {
+        Optional<User> existedUser = userRepository.findByUsernameIgnoreCase(user.getUsername());
+        if (existedUser.isEmpty()) {
             return Optional.empty();
         }
         if(user.getRole() != null){
