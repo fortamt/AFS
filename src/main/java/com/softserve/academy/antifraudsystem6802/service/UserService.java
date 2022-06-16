@@ -41,8 +41,8 @@ public class UserService implements UserDetailsService {
     @Transactional
     public Optional<User> register(User user) {
         Optional<User> existedUser = userRepository.findByUsernameIgnoreCase(user.getUsername());
-        if (!existedUser.isEmpty()) {
-            return Optional.empty();
+        if (existedUser.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
         if(user.getRole() != null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
