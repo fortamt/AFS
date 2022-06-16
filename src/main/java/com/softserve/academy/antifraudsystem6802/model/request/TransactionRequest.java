@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.softserve.academy.antifraudsystem6802.model.RegionCodes;
 import com.softserve.academy.antifraudsystem6802.model.validator.CreditCardConstraint;
 import com.softserve.academy.antifraudsystem6802.model.validator.ValueOfEnum;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +21,8 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "transactions")
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransactionRequest {
     @Id
     @GeneratedValue

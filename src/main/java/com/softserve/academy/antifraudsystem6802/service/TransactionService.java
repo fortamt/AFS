@@ -165,8 +165,8 @@ public class TransactionService {
 
     public List<TransactionRequest> history() {
         return transactionRepository.findAll(Sort.sort(TransactionRequest.class)
-                        .by(TransactionRequest::getTransactionId)
-                        .ascending());
+                .by(TransactionRequest::getTransactionId)
+                .ascending());
     }
 
     public List<TransactionRequest> historyByCardNumber(String number) {

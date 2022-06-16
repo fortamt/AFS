@@ -2,22 +2,29 @@ package com.softserve.academy.antifraudsystem6802.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Null;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Data
 @Table(name = "t_user")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails, UserDetailsMixin {
     @Id
     @GeneratedValue
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
     Long id;
     @NotEmpty
     String name;
@@ -31,7 +38,6 @@ public class User implements UserDetails, UserDetailsMixin {
     boolean isAccountNonLocked;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Role role;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

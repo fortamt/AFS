@@ -1,7 +1,9 @@
 package com.softserve.academy.antifraudsystem6802.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,6 +14,8 @@ import javax.validation.constraints.Pattern;
 @Getter
 @Setter
 @Table(name = "suspicious_ip")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Ip {
     @Id
     @GeneratedValue
