@@ -3,8 +3,8 @@ package com.softserve.academy.antifraudsystem6802.service;
 import com.softserve.academy.antifraudsystem6802.model.Ip;
 import com.softserve.academy.antifraudsystem6802.model.Result;
 import com.softserve.academy.antifraudsystem6802.model.StolenCard;
+import com.softserve.academy.antifraudsystem6802.model.request.Transaction;
 import com.softserve.academy.antifraudsystem6802.model.request.TransactionFeedback;
-import com.softserve.academy.antifraudsystem6802.model.request.TransactionRequest;
 import com.softserve.academy.antifraudsystem6802.model.response.TransactionResultResponse;
 import com.softserve.academy.antifraudsystem6802.repository.IpRepository;
 import com.softserve.academy.antifraudsystem6802.repository.StolenCardRepository;
@@ -35,15 +35,15 @@ public class TransactionService {
     StolenCardRepository stolenCardRepository;
     TransactionRepository transactionRepository;
 
-    public TransactionResultResponse process(TransactionRequest request) {
+    public TransactionResultResponse process(Transaction request) {
         LocalDateTime localDateTime = request.getDate();
         TransactionResultResponse response = new TransactionResultResponse();
         transactionRepository.save(request);
 
         long regions = transactionRepository.findAllByNumberAndDateBetween(request.getNumber(), localDateTime.minusHours(1), localDateTime)
-                .stream().map(TransactionRequest::getRegion).distinct().count();
+                .stream().map(Transaction::getRegion).distinct().count();
         long ips = transactionRepository.findAllByNumberAndDateBetween(request.getNumber(), localDateTime.minusHours(1), localDateTime)
-                .stream().map(TransactionRequest::getIp).distinct().count();
+                .stream().map(Transaction::getIp).distinct().count();
 
         if(stolenCardRepository.existsByNumber(request.getNumber())){
             response.setResult(Result.PROHIBITED);
@@ -147,8 +147,8 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
-    public TransactionRequest feedbackProcess(TransactionFeedback feedback) {
-        TransactionRequest transactionRequest;
+    public Transaction feedbackProcess(TransactionFeedback feedback) {
+        Transaction transactionRequest;
         if(transactionRepository.existsByTransactionId(feedback.getTransactionId())){
             transactionRequest = transactionRepository.findByTransactionId(feedback.getTransactionId());
             if(!transactionRequest.getFeedback().isEmpty()){
@@ -163,13 +163,13 @@ public class TransactionService {
         return transactionRequest;
     }
 
-    public List<TransactionRequest> history() {
-        return transactionRepository.findAll(Sort.sort(TransactionRequest.class)
-                .by(TransactionRequest::getTransactionId)
+    public List<Transaction> history() {
+        return transactionRepository.findAll(Sort.sort(Transaction.class)
+                .by(Transaction::getTransactionId)
                 .ascending());
     }
 
-    public List<TransactionRequest> historyByCardNumber(String number) {
+    public List<Transaction> historyByCardNumber(String number) {
         if(!transactionRepository.existsByNumber(number)){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

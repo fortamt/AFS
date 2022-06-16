@@ -2,7 +2,7 @@ package com.softserve.academy.antifraudsystem6802.repository;
 
 import com.softserve.academy.antifraudsystem6802.model.RegionCodes;
 import com.softserve.academy.antifraudsystem6802.model.Result;
-import com.softserve.academy.antifraudsystem6802.model.request.TransactionRequest;
+import com.softserve.academy.antifraudsystem6802.model.request.Transaction;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,7 +20,7 @@ public class TransactionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        repository.save(new TransactionRequest(
+        repository.save(new Transaction(
                 null,
                 1000L,
                 "10.10.10.10",
@@ -29,7 +29,7 @@ public class TransactionRepositoryTest {
                 LocalDateTime.of(2022, 12, 30, 18, 20),
                 Result.MANUAL_PROCESSING.name(),
                 "none"));
-        repository.save(new TransactionRequest(
+        repository.save(new Transaction(
                 null,
                 200L,
                 "250.10.180.10",
@@ -38,7 +38,7 @@ public class TransactionRepositoryTest {
                 LocalDateTime.of(2022, 6, 2, 15, 0),
                 Result.ALLOWED.name(),
                 "none"));
-        repository.save(new TransactionRequest(
+        repository.save(new Transaction(
                 null,
                 1700L,
                 "250.0.180.33",
@@ -77,7 +77,7 @@ public class TransactionRepositoryTest {
     void test3() {
         String cardNumber = "6242146850237385";
 
-        List<TransactionRequest> transactions = repository.findAllByNumberAndDateBetween(
+        List<Transaction> transactions = repository.findAllByNumberAndDateBetween(
                 cardNumber,
                 LocalDateTime.of(2022, 5, 1, 0, 0),
                 LocalDateTime.of(2022, 10, 1, 0, 0));
@@ -92,7 +92,7 @@ public class TransactionRepositoryTest {
     void test4() {
         String cardNumber = "4735410922991992";
 
-        List<TransactionRequest> transactions = repository.findAllByNumberAndDateBetween(
+        List<Transaction> transactions = repository.findAllByNumberAndDateBetween(
                 cardNumber,
                 LocalDateTime.of(2022, 11, 1, 0, 0),
                 LocalDateTime.of(2022, 12, 31, 0, 0));
@@ -106,7 +106,7 @@ public class TransactionRepositoryTest {
     void test5() {
         String cardNumber = "6242146850237385";
 
-        List<TransactionRequest> transactions = repository.findAllByNumber(cardNumber);
+        List<Transaction> transactions = repository.findAllByNumber(cardNumber);
 
         assertEquals(2, transactions.size());
         assertEquals(cardNumber, transactions.get(0).getNumber());
@@ -118,7 +118,7 @@ public class TransactionRepositoryTest {
     void test6() {
         String cardNumber = "4735410922991992";
 
-        List<TransactionRequest> transactions = repository.findAllByNumber(cardNumber);
+        List<Transaction> transactions = repository.findAllByNumber(cardNumber);
 
         assertEquals(1, transactions.size());
         assertEquals(cardNumber, transactions.get(0).getNumber());

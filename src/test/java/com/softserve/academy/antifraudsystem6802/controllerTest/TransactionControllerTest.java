@@ -1,7 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.controllerTest;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
-import com.softserve.academy.antifraudsystem6802.model.entity.User;
+import com.softserve.academy.antifraudsystem6802.model.User;
 import com.softserve.academy.antifraudsystem6802.model.request.RequestLock;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
 import com.softserve.academy.antifraudsystem6802.service.UserService;

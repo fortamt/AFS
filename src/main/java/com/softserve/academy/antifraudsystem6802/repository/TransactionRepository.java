@@ -1,6 +1,6 @@
 package com.softserve.academy.antifraudsystem6802.repository;
 
-import com.softserve.academy.antifraudsystem6802.model.entity.Transaction;
+import com.softserve.academy.antifraudsystem6802.model.request.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.validation.constraints.NotEmpty;

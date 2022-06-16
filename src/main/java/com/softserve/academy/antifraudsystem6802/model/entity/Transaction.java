@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Table(name = "transactions")
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionRequest {
+public class Transaction {
     @Id
     @GeneratedValue
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

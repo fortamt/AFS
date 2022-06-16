@@ -1,7 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
 import com.softserve.academy.antifraudsystem6802.model.Result;
-import com.softserve.academy.antifraudsystem6802.model.entity.Transaction;
+import com.softserve.academy.antifraudsystem6802.model.request.Transaction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
