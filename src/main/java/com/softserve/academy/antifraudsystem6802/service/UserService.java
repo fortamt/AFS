@@ -1,7 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
-import com.softserve.academy.antifraudsystem6802.model.User;
+import com.softserve.academy.antifraudsystem6802.model.entity.User;
 import com.softserve.academy.antifraudsystem6802.model.request.RequestLock;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
 import com.softserve.academy.antifraudsystem6802.repository.UserRepository;
@@ -40,15 +40,18 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Optional<User> register(User user) {
+        if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) {
+            return Optional.empty();
+        }
+        if(user.getRole() != null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         if (userRepository.count() == 0) {
             user.setRole(ADMINISTRATOR);
             user.setAccountNonLocked(true);
         } else {
             user.setRole(MERCHANT);
             user.setAccountNonLocked(false);
-        }
-        if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) {
-            return Optional.empty();
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return Optional.of(userRepository.save(user));
@@ -68,14 +71,14 @@ public class UserService implements UserDetailsService {
         );
 
         if (user.getRole().name().equals(ADMINISTRATOR.name())) {
-            user.setAccountNonLocked(true);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         if (!user.getRole().name().equals(ADMINISTRATOR.name()) && operation.equals("LOCK")) {
             user.setAccountNonLocked(false);
             userRepository.save(user);
             return Map.of("status", "User " + user.getUsername() + " locked!");
-        } else if (!user.getRole().name().equals(ADMINISTRATOR.name()) && operation.equals("UNLOCK") && !user.getRole().equals(ADMINISTRATOR.getAuthority())) {
+        } else if (!user.getRole().name().equals(ADMINISTRATOR.name()) && operation.equals("UNLOCK")) {
             user.setAccountNonLocked(true);
             userRepository.save(user);
             return Map.of("status", "User " + user.getUsername() + " unlocked!");
@@ -93,7 +96,7 @@ public class UserService implements UserDetailsService {
     public Optional<User> changeRole(RoleRequest request) {
         Optional<User> optionalUser = userRepository.findByUsernameIgnoreCase(request.getUsername());
         if (optionalUser.isEmpty()) {
-            return Optional.empty();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         var user = optionalUser.get();
         var role = request.getRole();

@@ -1,7 +1,10 @@
-package com.softserve.academy.antifraudsystem6802.model;
+package com.softserve.academy.antifraudsystem6802.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.softserve.academy.antifraudsystem6802.model.Role;
+import com.softserve.academy.antifraudsystem6802.model.UserDetailsMixin;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +17,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "t_user")
+@AllArgsConstructor
 public class User implements UserDetails, UserDetailsMixin {
     @Id
     @GeneratedValue
@@ -32,6 +36,7 @@ public class User implements UserDetails, UserDetailsMixin {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Role role;
 
+    public User() {}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
