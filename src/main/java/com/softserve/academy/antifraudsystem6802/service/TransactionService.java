@@ -3,8 +3,8 @@ package com.softserve.academy.antifraudsystem6802.service;
 import com.softserve.academy.antifraudsystem6802.model.Ip;
 import com.softserve.academy.antifraudsystem6802.model.Result;
 import com.softserve.academy.antifraudsystem6802.model.StolenCard;
+import com.softserve.academy.antifraudsystem6802.model.request.Transaction;
 import com.softserve.academy.antifraudsystem6802.model.request.TransactionFeedback;
-import com.softserve.academy.antifraudsystem6802.model.entity.Transaction;
 import com.softserve.academy.antifraudsystem6802.model.response.TransactionResultResponse;
 import com.softserve.academy.antifraudsystem6802.repository.IpRepository;
 import com.softserve.academy.antifraudsystem6802.repository.StolenCardRepository;
@@ -165,8 +165,8 @@ public class TransactionService {
 
     public List<Transaction> history() {
         return transactionRepository.findAll(Sort.sort(Transaction.class)
-                        .by(Transaction::getTransactionId)
-                        .ascending());
+                .by(Transaction::getTransactionId)
+                .ascending());
     }
 
     public List<Transaction> historyByCardNumber(String number) {
