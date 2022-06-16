@@ -1,4 +1,4 @@
-package com.softserve.academy.antifraudsystem6802.model.request;
+package com.softserve.academy.antifraudsystem6802.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.softserve.academy.antifraudsystem6802.model.RegionCodes;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "transactions")
-public class TransactionRequest {
+public class Transaction {
     @Id
     @GeneratedValue
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

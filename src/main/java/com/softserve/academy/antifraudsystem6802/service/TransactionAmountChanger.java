@@ -1,7 +1,7 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
 import com.softserve.academy.antifraudsystem6802.model.Result;
-import com.softserve.academy.antifraudsystem6802.model.request.TransactionRequest;
+import com.softserve.academy.antifraudsystem6802.model.entity.Transaction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -10,7 +10,7 @@ public class TransactionAmountChanger {
     public static long ALLOWED = 200;
     public static long MANUAL_PROCESSING = 1500;
 
-    static void changeLimit(TransactionRequest transaction){
+    static void changeLimit(Transaction transaction){
         if(transaction.getResult().equals(transaction.getFeedback())){
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
@@ -42,19 +42,19 @@ public class TransactionAmountChanger {
         }
     }
 
-    private static void decreaseAllowed(TransactionRequest transaction) {
+    private static void decreaseAllowed(Transaction transaction) {
         ALLOWED = (long) Math.ceil(0.8 * ALLOWED - 0.2 * transaction.getAmount());
     }
 
-    private static void increaseAllowed(TransactionRequest transaction) {
+    private static void increaseAllowed(Transaction transaction) {
         ALLOWED = (long) Math.ceil(0.8 * ALLOWED + 0.2 * transaction.getAmount());
     }
 
-    private static void increaseManualProcessing(TransactionRequest transaction) {
+    private static void increaseManualProcessing(Transaction transaction) {
         MANUAL_PROCESSING = (long) Math.ceil(0.8 * MANUAL_PROCESSING + 0.2 * transaction.getAmount());
     }
 
-    private static void decreaseManualProcessing(TransactionRequest transaction) {
+    private static void decreaseManualProcessing(Transaction transaction) {
         MANUAL_PROCESSING = (long) Math.ceil(0.8 * MANUAL_PROCESSING - 0.2 * transaction.getAmount());
     }
 

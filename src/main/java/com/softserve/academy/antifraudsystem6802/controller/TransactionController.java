@@ -3,7 +3,7 @@ package com.softserve.academy.antifraudsystem6802.controller;
 import com.softserve.academy.antifraudsystem6802.model.Ip;
 import com.softserve.academy.antifraudsystem6802.model.StolenCard;
 import com.softserve.academy.antifraudsystem6802.model.request.TransactionFeedback;
-import com.softserve.academy.antifraudsystem6802.model.request.TransactionRequest;
+import com.softserve.academy.antifraudsystem6802.model.entity.Transaction;
 import com.softserve.academy.antifraudsystem6802.model.response.TransactionResultResponse;
 import com.softserve.academy.antifraudsystem6802.model.validator.CreditCardConstraint;
 import com.softserve.academy.antifraudsystem6802.service.TransactionService;
@@ -27,25 +27,25 @@ public class TransactionController {
 
     @PostMapping("/transaction")
     @ResponseStatus(HttpStatus.OK)
-    TransactionResultResponse transactionPost(@Valid @RequestBody TransactionRequest request) {
+    TransactionResultResponse transactionPost(@Valid @RequestBody Transaction request) {
         return transactionService.process(request);
     }
 
     @PutMapping("/transaction")
     @ResponseStatus(HttpStatus.OK)
-    TransactionRequest transactionPut(@Valid @RequestBody TransactionFeedback feedback) {
+    Transaction transactionPut(@Valid @RequestBody TransactionFeedback feedback) {
         return transactionService.feedbackProcess(feedback);
     }
 
     @GetMapping("/history")
     @ResponseStatus(HttpStatus.OK)
-    List<TransactionRequest> transactionHistory() {
+    List<Transaction> transactionHistory() {
         return transactionService.history();
     }
 
     @GetMapping("/history/{number}")
     @ResponseStatus(HttpStatus.OK)
-    List<TransactionRequest> transactionHistoryByCardNumber(@PathVariable
+    List<Transaction> transactionHistoryByCardNumber(@PathVariable
                                                             @CreditCardConstraint String number) {
         return transactionService.historyByCardNumber(number);
     }
