@@ -41,10 +41,8 @@ public class TransactionService {
         TransactionResultResponse response = new TransactionResultResponse();
         transactionRepository.save(request);
 
-        long regions = transactionRepository.findAllByNumberAndDateBetween(request.getNumber(), localDateTime.minusHours(1), localDateTime)
-                .stream().map(Transaction::getRegion).distinct().count();
-        long ips = transactionRepository.findAllByNumberAndDateBetween(request.getNumber(), localDateTime.minusHours(1), localDateTime)
-                .stream().map(Transaction::getIp).distinct().count();
+        long regions = transactionRepository.countDistinctByRegionAndDateBetween(request.getRegion(), localDateTime.minusHours(1), localDateTime);
+        long ips = transactionRepository.countDistinctByIpAndDateBetween(request.getIp(), localDateTime.minusHours(1), localDateTime);
 
         if(stolenCardRepository.existsByNumber(request.getNumber())){
             response.setResult(Result.PROHIBITED);
@@ -71,11 +69,10 @@ public class TransactionService {
             response.addInfo(ipCorrelation);
         }
         final String amount = "amount";
-        if(request.getAmount() > 1500){
-            response.setResult(Result.PROHIBITED);
-            response.addInfo(amount);
-        }
-
+//        if(request.getAmount() > 1500){
+//            response.setResult(Result.PROHIBITED);
+//            response.addInfo(amount);
+//        }
         if(response.getInfo().isEmpty()){
             if(request.getAmount() <= TransactionAmountChanger.getAllowed()){
                 response.setResult(Result.ALLOWED);
@@ -140,8 +137,8 @@ public class TransactionService {
         return ipRepository.deleteByIp(ip) == 1;
     }
 
-    private boolean isValidIPV4(final String s) {
-        return IPV4_PATTERN.matcher(s).matches();
+    private boolean isValidIPV4(final String ip) {
+        return IPV4_PATTERN.matcher(ip).matches();
     }
 
     public List<IpHolder> listSuspiciousAddresses() {
@@ -152,19 +149,19 @@ public class TransactionService {
     }
 
     public Transaction feedbackProcess(TransactionFeedback feedback) {
-        Transaction transactionRequest;
-        if(transactionRepository.existsByTransactionId(feedback.getTransactionId())){
-            transactionRequest = transactionRepository.findByTransactionId(feedback.getTransactionId());
-            if(!transactionRequest.getFeedback().isEmpty()){
+        Optional<Transaction> transactionRequest = transactionRepository.findByTransactionId(feedback.getTransactionId());
+        if(transactionRequest.isPresent()){
+            if(!transactionRequest.get().getFeedback().isEmpty()){
                 throw new ResponseStatusException(HttpStatus.CONFLICT);
             }
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        transactionRequest.setFeedback(feedback.getFeedback().name());
-        TransactionAmountChanger.changeLimit(transactionRequest);
-        transactionRepository.save(transactionRequest);
-        return transactionRequest;
+        Transaction transaction = transactionRequest.get();
+        transaction.setFeedback(feedback.getFeedback().name());
+        TransactionAmountChanger.changeLimit(transaction);
+        transactionRepository.save(transaction);
+        return transaction;
     }
 
     public List<Transaction> history() {
