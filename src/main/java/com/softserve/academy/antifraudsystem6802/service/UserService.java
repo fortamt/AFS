@@ -1,7 +1,8 @@
 package com.softserve.academy.antifraudsystem6802.service;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
-import com.softserve.academy.antifraudsystem6802.model.User;
+import com.softserve.academy.antifraudsystem6802.model.entity.User;
+import com.softserve.academy.antifraudsystem6802.model.request.RequestLock;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
 import com.softserve.academy.antifraudsystem6802.repository.UserRepository;
 import org.springframework.data.domain.Sort;
@@ -70,14 +71,14 @@ public class UserService implements UserDetailsService {
         );
 
         if (user.getRole().name().equals(ADMINISTRATOR.name())) {
-            user.setAccountNonLocked(true);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         if (!user.getRole().name().equals(ADMINISTRATOR.name()) && operation.equals("LOCK")) {
             user.setAccountNonLocked(false);
             userRepository.save(user);
             return Map.of("status", "User " + user.getUsername() + " locked!");
-        } else if (!user.getRole().name().equals(ADMINISTRATOR.name()) && operation.equals("UNLOCK") && !user.getRole().equals(ADMINISTRATOR.getAuthority())) {
+        } else if (!user.getRole().name().equals(ADMINISTRATOR.name()) && operation.equals("UNLOCK")) {
             user.setAccountNonLocked(true);
             userRepository.save(user);
             return Map.of("status", "User " + user.getUsername() + " unlocked!");

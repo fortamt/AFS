@@ -2,6 +2,7 @@ package com.softserve.academy.antifraudsystem6802.service;
 
 import com.softserve.academy.antifraudsystem6802.model.Role;
 import com.softserve.academy.antifraudsystem6802.model.entity.User;
+import com.softserve.academy.antifraudsystem6802.model.request.RequestLock;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
 import com.softserve.academy.antifraudsystem6802.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -168,20 +168,25 @@ class UserServiceTest {
                 "password",
                 false,
                 Role.MERCHANT);  // wrong here (must be null)
-        Map<String, String> lockUsers = Map.of("username", "second", "operation", "UNLOCK");
+        RequestLock requestLock = new RequestLock();
+        requestLock.setUsername(user.getUsername());
+        requestLock.setOperation("UNLOCK");
 
         given(userRepository.findByUsernameIgnoreCase(user.getUsername())).willReturn(Optional.of(user));
 
-        underTest.lock(lockUsers);
+        underTest.lock(requestLock);
         verify(userRepository).save(user);
         assertThat(user.isAccountNonLocked()).isEqualTo(true);
     }
 
     @Test
     void lockNotExistedUser() {
-        Map<String, String> lockUsers = Map.of("username", "second", "operation", "UNLOCK");
+        RequestLock requestLock = new RequestLock();
+        requestLock.setUsername("NotExisted");
+        requestLock.setOperation("UNLOCK");
 
-        assertThatThrownBy(() -> underTest.lock(lockUsers))
+
+        assertThatThrownBy(() -> underTest.lock(requestLock))
                 .isInstanceOf(ResponseStatusException.class);
     }
 
@@ -194,11 +199,14 @@ class UserServiceTest {
                 "password",
                 true,
                 Role.MERCHANT);  // wrong here (must be null)
-        Map<String, String> lockUsers = Map.of("username", "second", "operation", "LOCK");
+        RequestLock requestLock = new RequestLock();
+        requestLock.setUsername(user.getUsername());
+        requestLock.setOperation("LOCK");
+
 
         given(userRepository.findByUsernameIgnoreCase(user.getUsername())).willReturn(Optional.of(user));
 
-        underTest.lock(lockUsers);
+        underTest.lock(requestLock);
         verify(userRepository).save(user);
         assertThat(user.isAccountNonLocked()).isEqualTo(false);
     }
@@ -212,11 +220,32 @@ class UserServiceTest {
                 "password",
                 true,
                 Role.MERCHANT);  // wrong here (must be null)
-        Map<String, String> lockUsers = Map.of("username", "second", "operation", "WRONG");
+        RequestLock requestLock = new RequestLock();
+        requestLock.setUsername(user.getUsername());
+        requestLock.setOperation("WRONG");
 
         given(userRepository.findByUsernameIgnoreCase(user.getUsername())).willReturn(Optional.of(user));
 
-        assertThatThrownBy(() -> underTest.lock(lockUsers))
+        assertThatThrownBy(() -> underTest.lock(requestLock))
+                .isInstanceOf(ResponseStatusException.class);
+    }
+
+    @Test
+    void lockException2() {
+        User user = new User(
+                null,
+                "Artem",
+                "second",
+                "password",
+                true,
+                Role.ADMINISTRATOR);  // wrong here (must be null)
+        RequestLock requestLock = new RequestLock();
+        requestLock.setUsername(user.getUsername());
+        requestLock.setOperation("LOCK");
+
+        given(userRepository.findByUsernameIgnoreCase(user.getUsername())).willReturn(Optional.of(user));
+
+        assertThatThrownBy(() -> underTest.lock(requestLock))
                 .isInstanceOf(ResponseStatusException.class);
     }
 
