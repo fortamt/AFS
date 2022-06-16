@@ -1,7 +1,9 @@
 package com.softserve.academy.antifraudsystem6802.controller;
 
-import com.softserve.academy.antifraudsystem6802.model.entity.User;
+import com.softserve.academy.antifraudsystem6802.model.User;
+import com.softserve.academy.antifraudsystem6802.model.request.RequestLock;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
+import com.softserve.academy.antifraudsystem6802.model.response.ResponseDelete;
 import com.softserve.academy.antifraudsystem6802.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,12 +35,12 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{username}")
-    Map<String, String> delete(@PathVariable String username) {
+    ResponseDelete delete(@PathVariable String username) {
         if (userService.delete(username)) {
-            return Map.of(
-                    "username", username,
-                    "status", "Deleted successfully!"
-            );
+            ResponseDelete responseDelete = new ResponseDelete();
+            responseDelete.setUsername(username);
+            responseDelete.setStatus("Deleted successfully!");
+            return responseDelete;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -53,7 +55,7 @@ public class UserController {
 
     @PutMapping("/access")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, String> doLock(@RequestBody Map<String, String> lockUsers) {
+    public Map<String, String> doLock(@RequestBody RequestLock lockUsers) {
         return userService.lock(lockUsers);
     }
 
