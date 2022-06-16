@@ -65,9 +65,9 @@ class UserRepositoryTest {
     void test4() {
         repository.save(user);
 
-        boolean exists = repository.existsByUsernameIgnoreCase(user.getUsername().toUpperCase(Locale.ROOT));
+        Optional<User> exists = repository.findByUsernameIgnoreCase(user.getUsername().toUpperCase(Locale.ROOT));
 
-        assertTrue(exists);
+        assertTrue(exists.isPresent());
     }
 
     @Test

@@ -34,26 +34,28 @@ class UserServiceTest {
     private PasswordEncoder encoder;
     private UserService underTest;
 
+    private User defaultUser;
+
     @BeforeEach
     void setUp() {
         underTest =new UserService(userRepository, encoder);
-    }
 
-    @Test
-    void loadUserByUsername() {
-        User user = new User(
+        this.defaultUser = new User(
                 null,
                 "Artem",
                 "fortamt",
                 "password",
                 false,
                 null);
+    }
 
-        Mockito.when(userRepository.findByUsernameIgnoreCase(user.getUsername())).thenReturn(Optional.of(user));
+    @Test
+    void loadUserByUsername() {
+        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.of(defaultUser));
 
-        underTest.loadUserByUsername(user.getUsername());
+        underTest.loadUserByUsername(defaultUser.getUsername());
 
-        verify(userRepository).findByUsernameIgnoreCase(user.getUsername());
+        verify(userRepository).findByUsernameIgnoreCase(defaultUser.getUsername());
     }
 
     @Test
@@ -65,19 +67,11 @@ class UserServiceTest {
 
     @Test
     void canRegisterFirstUserAsAdministrator() {
-        //given
-        User user = new User(
-                null,
-                "Artem",
-                "fortamt",
-                "password",
-                false,
-                null);
-
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.ofNullable(defaultUser));
+        Mockito.when(userRepository.save(defaultUser)).thenReturn(defaultUser);
 
         //when
-        underTest.register(user);
+        underTest.register(defaultUser);
 
         //then
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
@@ -85,7 +79,7 @@ class UserServiceTest {
 
         User capturedUser = userArgumentCaptor.getValue();
 
-        assertThat(capturedUser).isEqualTo(user);
+        assertThat(capturedUser).isEqualTo(defaultUser);
         assertThat(capturedUser.getRole()).isEqualTo(Role.ADMINISTRATOR);
         assertThat(capturedUser.isAccountNonLocked()).isEqualTo(true);
     }
@@ -93,19 +87,12 @@ class UserServiceTest {
     @Test
     void canRegisterOtherNotFirstUserAsMerchant() {
         //given
-        User user = new User(
-                null,
-                "Artem",
-                "second",
-                "password",
-                false,
-                null);
-
         given(userRepository.count()).willReturn(1L);
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.ofNullable(defaultUser));
+        Mockito.when(userRepository.save(defaultUser)).thenReturn(defaultUser);
 
         //when
-        underTest.register(user);
+        underTest.register(defaultUser);
 
         //then
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
@@ -113,41 +100,26 @@ class UserServiceTest {
 
         User capturedUser = userArgumentCaptor.getValue();
 
-        assertThat(capturedUser).isEqualTo(user);
+        assertThat(capturedUser).isEqualTo(defaultUser);
         assertThat(capturedUser.getRole()).isEqualTo(Role.MERCHANT);
         assertThat(capturedUser.isAccountNonLocked()).isEqualTo(false);
     }
 
     @Test
     void cannotRegisterExistedUser() {
-        //given
-        User user = new User(
-                null,
-                "Artem",
-                "second",
-                "password",
-                false,
-                null);
-
-        given(userRepository.existsByUsernameIgnoreCase(user.getUsername())).willReturn(true);
-
         //when
-        Optional<User> tryToRegisterUser = underTest.register(user);
+        Optional<User> tryToRegisterUser = underTest.register(defaultUser);
         assertThat(tryToRegisterUser).isEqualTo(Optional.empty());
     }
 
     @Test
     void cannotRegisterWithWrongParameters() {
         //given
-        User user = new User(
-                null,
-                "Artem",
-                "second",
-                "password",
-                false,
-                Role.ADMINISTRATOR);  // wrong here (must be null)
+        defaultUser.setRole(Role.ADMINISTRATOR);
+        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.ofNullable(defaultUser));
+
         //when
-        assertThatThrownBy(() -> underTest.register(user))
+        assertThatThrownBy(() -> underTest.register(defaultUser))
                 .isInstanceOf(ResponseStatusException.class);
     }
 
@@ -161,22 +133,16 @@ class UserServiceTest {
 
     @Test
     void lockUnlock() {
-        User user = new User(
-                null,
-                "Artem",
-                "second",
-                "password",
-                false,
-                Role.MERCHANT);  // wrong here (must be null)
+        defaultUser.setRole(Role.MERCHANT);
         RequestLock requestLock = new RequestLock();
-        requestLock.setUsername(user.getUsername());
+        requestLock.setUsername(defaultUser.getUsername());
         requestLock.setOperation("UNLOCK");
 
-        given(userRepository.findByUsernameIgnoreCase(user.getUsername())).willReturn(Optional.of(user));
+        given(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).willReturn(Optional.of(defaultUser));
 
         underTest.lock(requestLock);
-        verify(userRepository).save(user);
-        assertThat(user.isAccountNonLocked()).isEqualTo(true);
+        verify(userRepository).save(defaultUser);
+        assertThat(defaultUser.isAccountNonLocked()).isEqualTo(true);
     }
 
     @Test
@@ -192,39 +158,29 @@ class UserServiceTest {
 
     @Test
     void lock() {
-        User user = new User(
-                null,
-                "Artem",
-                "second",
-                "password",
-                true,
-                Role.MERCHANT);  // wrong here (must be null)
+        defaultUser.setRole(Role.MERCHANT);
+
         RequestLock requestLock = new RequestLock();
-        requestLock.setUsername(user.getUsername());
+        requestLock.setUsername(defaultUser.getUsername());
         requestLock.setOperation("LOCK");
 
 
-        given(userRepository.findByUsernameIgnoreCase(user.getUsername())).willReturn(Optional.of(user));
+        given(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).willReturn(Optional.of(defaultUser));
 
         underTest.lock(requestLock);
-        verify(userRepository).save(user);
-        assertThat(user.isAccountNonLocked()).isEqualTo(false);
+        verify(userRepository).save(defaultUser);
+        assertThat(defaultUser.isAccountNonLocked()).isEqualTo(false);
     }
 
     @Test
     void lockException() {
-        User user = new User(
-                null,
-                "Artem",
-                "second",
-                "password",
-                true,
-                Role.MERCHANT);  // wrong here (must be null)
+        defaultUser.setRole(Role.MERCHANT);
+
         RequestLock requestLock = new RequestLock();
-        requestLock.setUsername(user.getUsername());
+        requestLock.setUsername(defaultUser.getUsername());
         requestLock.setOperation("WRONG");
 
-        given(userRepository.findByUsernameIgnoreCase(user.getUsername())).willReturn(Optional.of(user));
+        given(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).willReturn(Optional.of(defaultUser));
 
         assertThatThrownBy(() -> underTest.lock(requestLock))
                 .isInstanceOf(ResponseStatusException.class);
@@ -232,18 +188,13 @@ class UserServiceTest {
 
     @Test
     void lockException2() {
-        User user = new User(
-                null,
-                "Artem",
-                "second",
-                "password",
-                true,
-                Role.ADMINISTRATOR);  // wrong here (must be null)
+        defaultUser.setRole(Role.ADMINISTRATOR);
+
         RequestLock requestLock = new RequestLock();
-        requestLock.setUsername(user.getUsername());
+        requestLock.setUsername(defaultUser.getUsername());
         requestLock.setOperation("LOCK");
 
-        given(userRepository.findByUsernameIgnoreCase(user.getUsername())).willReturn(Optional.of(user));
+        given(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).willReturn(Optional.of(defaultUser));
 
         assertThatThrownBy(() -> underTest.lock(requestLock))
                 .isInstanceOf(ResponseStatusException.class);
@@ -251,36 +202,23 @@ class UserServiceTest {
 
     @Test
     void delete() {
-        User user = new User(
-                null,
-                "Artem",
-                "fortamt",
-                "password",
-                false,
-                null);
+        Mockito.when(userRepository.deleteByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(1);
 
-        Mockito.when(userRepository.deleteByUsernameIgnoreCase(user.getUsername())).thenReturn(1);
-
-        boolean flag = underTest.delete(user.getUsername());
-        verify(userRepository).deleteByUsernameIgnoreCase(user.getUsername());
+        boolean flag = underTest.delete(defaultUser.getUsername());
+        verify(userRepository).deleteByUsernameIgnoreCase(defaultUser.getUsername());
         assertThat(flag).isEqualTo(true);
     }
 
     @Test
     void changeRole() {
-        User user = new User(
-                null,
-                "Artem",
-                "fortamt",
-                "password",
-                false,
-                Role.MERCHANT);
+        defaultUser.setRole(Role.MERCHANT);
+
         RoleRequest request = new RoleRequest();
-        request.setUsername(user.getUsername());
+        request.setUsername(defaultUser.getUsername());
         request.setRole(Role.SUPPORT);
 
-        Mockito.when(userRepository.findByUsernameIgnoreCase(user.getUsername())).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.findByUsernameIgnoreCase(defaultUser.getUsername())).thenReturn(Optional.of(defaultUser));
+        Mockito.when(userRepository.save(defaultUser)).thenReturn(defaultUser);
 
         underTest.changeRole(request);
 
@@ -289,9 +227,9 @@ class UserServiceTest {
 
         User capturedUser = userArgumentCaptor.getValue();
 
-        assertThat(user.getRole()).isEqualTo(request.getRole());
-        assertThat(capturedUser.getRole()).isEqualTo(user.getRole());
-        assertThat(user.getRole()).isEqualTo(Role.SUPPORT);
+        assertThat(defaultUser.getRole()).isEqualTo(request.getRole());
+        assertThat(capturedUser.getRole()).isEqualTo(defaultUser.getRole());
+        assertThat(defaultUser.getRole()).isEqualTo(Role.SUPPORT);
     }
 
     @Test
@@ -309,18 +247,12 @@ class UserServiceTest {
 
     @Test
     void changeRoleBadRequest() {
-        User user = new User(
-                null,
-                "Artem",
-                "fortamt",
-                "password",
-                false,
-                Role.MERCHANT);
+        defaultUser.setRole(Role.MERCHANT);
         RoleRequest request = new RoleRequest();
-        request.setUsername(user.getUsername());
+        request.setUsername(defaultUser.getUsername());
         request.setRole(Role.ADMINISTRATOR);
 
-        Mockito.when(userRepository.findByUsernameIgnoreCase(request.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByUsernameIgnoreCase(request.getUsername())).thenReturn(Optional.of(defaultUser));
 
         assertThatThrownBy(() -> underTest.changeRole(request))
                 .isInstanceOf(ResponseStatusException.class);
@@ -328,18 +260,13 @@ class UserServiceTest {
 
     @Test
     void changeRoleConflict() {
-        User user = new User(
-                null,
-                "Artem",
-                "fortamt",
-                "password",
-                false,
-                Role.MERCHANT);
+        defaultUser.setRole(Role.MERCHANT);
+
         RoleRequest request = new RoleRequest();
-        request.setUsername(user.getUsername());
+        request.setUsername(defaultUser.getUsername());
         request.setRole(Role.MERCHANT);
 
-        Mockito.when(userRepository.findByUsernameIgnoreCase(request.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByUsernameIgnoreCase(request.getUsername())).thenReturn(Optional.of(defaultUser));
 
         assertThatThrownBy(() -> underTest.changeRole(request))
                 .isInstanceOf(ResponseStatusException.class);
