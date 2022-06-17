@@ -29,13 +29,10 @@ class UserControllerTest {
 
     private final String transactionApi = "/api/antifraud/transaction";
     private final String userApi = "/api/auth/user";
-    private final String deleteApi = "/api/auth/user/*";
     private final String userListApi = "/api/auth/list";
     private final String lockApi = "/api/auth/access";
     private final String roleApi = "/api/auth/role";
-    private final String ipApi = "/api/antifraud/suspicious-ip";
-    private final String cardApi = "/api/antifraud/stolencard";
-    private final String historyApi = "/api/antifraud/history";
+
 
     private String admin = "{\n" +
             "   \"name\": \"administrator\",\n" +

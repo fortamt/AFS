@@ -1,9 +1,13 @@
 package com.softserve.academy.antifraudsystem6802.controllerTest;
 
+import com.softserve.academy.antifraudsystem6802.model.IpHolder;
 import com.softserve.academy.antifraudsystem6802.model.Role;
+import com.softserve.academy.antifraudsystem6802.model.StolenCard;
 import com.softserve.academy.antifraudsystem6802.model.entity.User;
 import com.softserve.academy.antifraudsystem6802.model.request.RequestLock;
 import com.softserve.academy.antifraudsystem6802.model.request.RoleRequest;
+import com.softserve.academy.antifraudsystem6802.repository.IpRepository;
+import com.softserve.academy.antifraudsystem6802.service.TransactionService;
 import com.softserve.academy.antifraudsystem6802.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,17 +30,17 @@ class TransactionControllerTest {
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private MockMvc mockMvc;
 
+
     @Autowired
     UserService userService;
+
+    @Autowired
+    TransactionService transactionService;
     private final String transactionApi = "/api/antifraud/transaction";
-    private final String userApi = "/api/auth/user";
-    private final String deleteApi = "/api/auth/user/*";
-    private final String userListApi = "/api/auth/list";
-    private final String lockApi = "/api/auth/access";
-    private final String roleApi = "/api/auth/role";
-    private final String ipApi = "/api/antifraud/suspicious-ip";
-    private final String cardApi = "/api/antifraud/stolencard";
-    private final String historyApi = "/api/antifraud/history";
+    private final String answerAllowed = "{\r\n" +
+            "  \"result\" : \"ALLOWED\",\r\n" +
+            "  \"info\" : \"none\"\r\n" +
+            "}";
 
 
     @BeforeEach
@@ -70,10 +74,16 @@ class TransactionControllerTest {
         requestLock.setOperation("UNLOCK");
         userService.lock(requestLock);
 
-        RoleRequest roleRequest = new RoleRequest();
-        roleRequest.setUsername("daniel");
-        roleRequest.setRole(Role.SUPPORT);
-        userService.changeRole(roleRequest);
+        RoleRequest roleRequest1 = new RoleRequest();
+        roleRequest1.setUsername("daniel");
+        roleRequest1.setRole(Role.SUPPORT);
+        userService.changeRole(roleRequest1);
+
+        RequestLock requestLock1 = new RequestLock();
+        requestLock1.setUsername("daniel");
+        requestLock1.setOperation("UNLOCK");
+        userService.lock(requestLock1);
+
     }
 
     @Test
@@ -101,90 +111,6 @@ class TransactionControllerTest {
                 "}";
 
 
-
-        String corr2IP = "{\n" +
-                "  \"amount\": 1,\n" +
-                "  \"ip\": \"192.168.1.3\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"EAP\",\n" +
-                "  \"date\": \"2022-01-22T17:11:00\"\n" +
-                "}";
-        String corr22IP = "{\n" +
-                "  \"amount\": 1,\n" +
-                "  \"ip\": \"192.168.1.3\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"EAP\",\n" +
-                "  \"date\": \"2022-01-22T17:12:00\"\n" +
-                "}";
-        String corr3IP = "{\n" +
-                "  \"amount\": 1,\n" +
-                "  \"ip\": \"192.168.1.4\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"EAP\",\n" +
-                "  \"date\": \"2022-01-22T17:12:00\"\n" +
-                "}";
-        String corr4IP = "{\n" +
-                "  \"amount\": 1,\n" +
-                "  \"ip\": \"192.168.1.5\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"EAP\",\n" +
-                "  \"date\": \"2022-01-22T17:13:00\"\n" +
-                "}";
-        String corr5IP = "{\n" +
-                "  \"amount\": 2000,\n" +
-                "  \"ip\": \"192.168.1.5\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"EAP\",\n" +
-                "  \"date\": \"2022-01-22T17:14:00\"\n" +
-                "}";
-        String corr1Reg = "{\n" +
-                "  \"amount\": 1,\n" +
-                "  \"ip\": \"192.168.1.2\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"EAP\",\n" +
-                "  \"date\": \"2022-01-21T17:10:00\"\n" +
-                "}";
-        String corr2Reg = "{\n" +
-                "  \"amount\": 1,\n" +
-                "  \"ip\": \"192.168.1.2\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"ECA\",\n" +
-                "  \"date\": \"2022-01-21T17:11:00\"\n" +
-                "}";
-        String corr22Reg = "{\n" +
-                "  \"amount\": 1,\n" +
-                "  \"ip\": \"192.168.1.2\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"ECA\",\n" +
-                "  \"date\": \"2022-01-21T17:12:00\"\n" +
-                "}";
-        String corr3Reg = "{\n" +
-                "  \"amount\": 1,\n" +
-                "  \"ip\": \"192.168.1.2\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"HIC\",\n" +
-                "  \"date\": \"2022-01-21T17:13:00\"\n" +
-                "}";
-        String corr4Reg = "{\n" +
-                "  \"amount\": 1,\n" +
-                "  \"ip\": \"192.168.1.2\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"SSA\",\n" +
-                "  \"date\": \"2022-01-21T17:14:00\"\n" +
-                "}";
-        String corr5Reg = "{\n" +
-                "  \"amount\": 2000,\n" +
-                "  \"ip\": \"192.168.1.2\",\n" +
-                "  \"number\": \"4000008449433403\",\n" +
-                "  \"region\": \"SA\",\n" +
-                "  \"date\": \"2022-01-21T17:15:00\"\n" +
-                "}";
-
-        String answerAllowed = "{\r\n" +
-                "  \"result\" : \"ALLOWED\",\r\n" +
-                "  \"info\" : \"none\"\r\n" +
-                "}";
-
         String answerManualAmount = "{\r\n" +
                 "  \"result\" : \"MANUAL_PROCESSING\",\r\n" +
                 "  \"info\" : \"amount\"\r\n" +
@@ -194,36 +120,6 @@ class TransactionControllerTest {
                 "  \"result\" : \"PROHIBITED\",\r\n" +
                 "  \"info\" : \"amount\"\r\n" +
                 "}";
-
-
-
-        String answerManualIpCorr = "{\r\n" +
-                "  \"result\" : \"MANUAL_PROCESSING\",\r\n" +
-                "  \"info\" : \"ip-correlation\"\r\n" +
-                "}";
-
-        String answerProhibitedIpCorr = "{\r\n" +
-                "  \"result\" : \"PROHIBITED\",\r\n" +
-                "  \"info\" : \"ip-correlation\"\r\n" +
-                "}";
-        String answerProhibitedCardNumberAndIpAndAmountAndIpCorr = "{\r\n" +
-                "  \"result\" : \"PROHIBITED\",\r\n" +
-                "  \"info\" : \"amount, card-number, ip, ip-correlation\"\r\n" +
-                "}";
-        String answerManualRegCorr = "{\r\n" +
-                "  \"result\" : \"MANUAL_PROCESSING\",\r\n" +
-                "  \"info\" : \"region-correlation\"\r\n" +
-                "}";
-        String answerProhibitedRegCorr = "{\r\n" +
-                "  \"result\" : \"PROHIBITED\",\r\n" +
-                "  \"info\" : \"region-correlation\"\r\n" +
-                "}";
-
-        String answerProhibitedCardNumberAndIpAndAmountAndRegCorr = "{\r\n" +
-                "  \"result\" : \"PROHIBITED\",\r\n" +
-                "  \"info\" : \"amount, card-number, ip, region-correlation\"\r\n" +
-                "}";
-
 
         MvcResult result1 = this.mockMvc.perform(post(transactionApi).content(tr1).
                         with(httpBasic("john", "2222")).
@@ -332,6 +228,11 @@ class TransactionControllerTest {
 
     @Test
     void transactionPostBlackList() throws Exception {
+        StolenCard stolenCard = new StolenCard();
+        stolenCard.setNumber("4000003305160034");
+        transactionService.addStolenCard(stolenCard);
+        transactionService.addSuspiciousIp(new IpHolder(null, "192.168.1.67"));
+
         String trP1 = "{\n" +
                 "  \"amount\": 1000,\n" +
                 "  \"ip\": \"192.168.1.67\",\n" +
@@ -407,9 +308,191 @@ class TransactionControllerTest {
                 andExpect(status().isOk()).
                 andReturn();
         Assertions.assertEquals(answerProhibitedCardNumberAndIpAndAmount, result4.getResponse().getContentAsString());
+    }
 
+    @Test
+    public void transactionIpCorr() throws Exception {
+        String corr1IP = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.2\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"EAP\",\n" +
+                "  \"date\": \"2022-01-22T17:10:00\"\n" +
+                "}";
+        String corr2IP = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.3\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"EAP\",\n" +
+                "  \"date\": \"2022-01-22T17:11:00\"\n" +
+                "}";
+        String corr22IP = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.3\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"EAP\",\n" +
+                "  \"date\": \"2022-01-22T17:12:00\"\n" +
+                "}";
+        String corr3IP = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.4\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"EAP\",\n" +
+                "  \"date\": \"2022-01-22T17:12:00\"\n" +
+                "}";
+        String corr4IP = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.5\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"EAP\",\n" +
+                "  \"date\": \"2022-01-22T17:13:00\"\n" +
+                "}";
+
+        String answerManualIpCorr = "{\r\n" +
+                "  \"result\" : \"MANUAL_PROCESSING\",\r\n" +
+                "  \"info\" : \"ip-correlation\"\r\n" +
+                "}";
+
+        String answerProhibitedIpCorr = "{\r\n" +
+                "  \"result\" : \"PROHIBITED\",\r\n" +
+                "  \"info\" : \"ip-correlation\"\r\n" +
+                "}";
+        MvcResult result1 = this.mockMvc.perform(post(transactionApi).content(corr1IP).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerAllowed, result1.getResponse().getContentAsString());
+
+        MvcResult result2 = this.mockMvc.perform(post(transactionApi).content(corr2IP).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerAllowed, result2.getResponse().getContentAsString());
+
+        MvcResult result3 = this.mockMvc.perform(post(transactionApi).content(corr22IP).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerAllowed, result3.getResponse().getContentAsString());
+
+        MvcResult result4 = this.mockMvc.perform(post(transactionApi).content(corr3IP).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerManualIpCorr, result4.getResponse().getContentAsString());
+
+        MvcResult result5 = this.mockMvc.perform(post(transactionApi).content(corr4IP).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerProhibitedIpCorr, result5.getResponse().getContentAsString());
+
+        this.mockMvc.perform(post(transactionApi).content(corr4IP).
+                        with(httpBasic("daniel", "3333")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isForbidden());
 
     }
 
+    @Test
+    public void transactionRegCorr() throws Exception {
 
+        String corr1Reg = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.2\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"EAP\",\n" +
+                "  \"date\": \"2022-01-21T17:10:00\"\n" +
+                "}";
+        String corr2Reg = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.2\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"ECA\",\n" +
+                "  \"date\": \"2022-01-21T17:11:00\"\n" +
+                "}";
+        String corr22Reg = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.2\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"ECA\",\n" +
+                "  \"date\": \"2022-01-21T17:12:00\"\n" +
+                "}";
+        String corr3Reg = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.2\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"HIC\",\n" +
+                "  \"date\": \"2022-01-21T17:13:00\"\n" +
+                "}";
+        String corr4Reg = "{\n" +
+                "  \"amount\": 1,\n" +
+                "  \"ip\": \"192.168.1.2\",\n" +
+                "  \"number\": \"4000008449433403\",\n" +
+                "  \"region\": \"SSA\",\n" +
+                "  \"date\": \"2022-01-21T17:14:00\"\n" +
+                "}";
+        String answerManualRegCorr = "{\r\n" +
+                "  \"result\" : \"MANUAL_PROCESSING\",\r\n" +
+                "  \"info\" : \"region-correlation\"\r\n" +
+                "}";
+        String answerProhibitedRegCorr = "{\r\n" +
+                "  \"result\" : \"PROHIBITED\",\r\n" +
+                "  \"info\" : \"region-correlation\"\r\n" +
+                "}";
+
+        MvcResult result1 = this.mockMvc.perform(post(transactionApi).content(corr1Reg).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerAllowed, result1.getResponse().getContentAsString());
+
+        MvcResult result2 = this.mockMvc.perform(post(transactionApi).content(corr2Reg).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerAllowed, result2.getResponse().getContentAsString());
+
+        MvcResult result3 = this.mockMvc.perform(post(transactionApi).content(corr22Reg).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerAllowed, result3.getResponse().getContentAsString());
+
+        MvcResult result4 = this.mockMvc.perform(post(transactionApi).content(corr3Reg).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerManualRegCorr, result4.getResponse().getContentAsString());
+
+        MvcResult result5 = this.mockMvc.perform(post(transactionApi).content(corr4Reg).
+                        with(httpBasic("john", "2222")).
+                        contentType(MediaType.APPLICATION_JSON).
+                        accept(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk()).
+                andReturn();
+        Assertions.assertEquals(answerProhibitedRegCorr, result5.getResponse().getContentAsString());
+
+
+
+    }
 }
